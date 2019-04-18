@@ -5,7 +5,7 @@ const http = require("http");
 const path = require("path");
 const mime = require('mime-types');
 const { promisify } = require("util");
-const logger = require("pino")();
+const logger = require("./logger");
 
 const readFileAsync = promisify(fs.readFile);
 

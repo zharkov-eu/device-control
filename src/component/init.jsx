@@ -1,9 +1,9 @@
 "use strict";
 
 import { render } from "inferno";
-import DimensionContainer from "./dimension/dimContainer";
+import MetricContainer from "./metric/metricContainer";
 
 import "../../public/src/css/normalize.css"
 import "../../public/src/css/main.css"
 
-render(<DimensionContainer/>, document.getElementById("app"));
+render(<MetricContainer/>, document.getElementById("app"));
