@@ -1,0 +1,39 @@
+{
+  "name": "device-control",
+  "version": "0.1.0",
+  "description": "Тестовое задание (контроль показателей устройства)",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node index",
+    "build": "cross-env NODE_ENV=production webpack -b",
+    "watch": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zharkov-eu/device-control.git"
+  },
+  "author": "Evgeni Zharkov <zharkov.ev.u@yandex.ru>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/zharkov-eu/device-control/issues"
+  },
+  "homepage": "https://github.com/zharkov-eu/device-control#readme",
+  "dependencies": {
+    "chokidar": "^2.1.5",
+    "cross-env": "^5.2.0",
+    "inferno": "^7.1.11",
+    "mime-types": "^2.1.23",
+    "pino": "^5.12.2",
+    "ws": "^6.2.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "babel-loader": "^8.0.5",
+    "babel-plugin-inferno": "^6.0.5",
+    "css-loader": "^2.1.1",
+    "mini-css-extract-plugin": "^0.6.0",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.0"
+  }
+}
