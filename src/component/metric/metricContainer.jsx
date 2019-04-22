@@ -1,8 +1,8 @@
 "use strict";
 
+import SimpleBar from "simplebar";
 import { Component } from "inferno";
-import MetricItem from "./metricItem";
-import { initScrollbar } from "../lib/scrollbar";
+import { MetricItem, MetricRelated } from "./metricItem";
 
 export default class MetricContainer extends Component {
   constructor(props) {
@@ -10,20 +10,32 @@ export default class MetricContainer extends Component {
     this.state = {
       state: 0,
       metricMap: {},
-      metricUnwrap: {},
+      metricExpanded: [],
       socket: this.createSocket()
     }
   }
 
   componentDidMount() {
     const container = document.getElementById("a-metric-scroll");
-    if (container) initScrollbar(container);
+    if (container) new SimpleBar(container, { autoHide: false });
   }
 
   render() {
-    const { metricMap } = this.state;
+    const { metricMap, metricExpanded } = this.state;
     const metrics = Object.values(metricMap);
-    const metricItems = metrics.filter(it => it.level === 0).map(it => <MetricItem metric={it}/>);
+    const metricItems = [];
+    for (const metric of metrics.filter(it => it.level === 0)) {
+      const isExpanded = metricExpanded.indexOf(metric.name) !== -1;
+      const related = isExpanded
+        ? metric.relations.filter(name => metricMap[name])
+          .map(name => <MetricRelated metric={metricMap[name]} update={(value) => this.updateMetric(name, value)}/>)
+        : [];
+
+      metricItems.push(<MetricItem metric={metric} related={related}
+                                   close={() => this.close(metric.name)}
+                                   expand={() => this.expand(metric.name)}
+                                   update={(value) => this.updateMetric(metric.name, value)}/>);
+    }
 
     return (
       <div className="a-container">
@@ -36,7 +48,7 @@ export default class MetricContainer extends Component {
             <div className="4/24 grid__cell grid__cell_center"/>
           </div>
         </div>
-        <div id="a-metric-scroll" className="overflow a-metric-scroll">
+        <div id="a-metric-scroll" className="a-metric-scroll">
           <div id="a-metric-container" className="a-metric-container">
             {metricItems}
           </div>
@@ -47,21 +59,52 @@ export default class MetricContainer extends Component {
 
   createSocket() {
     const socket = new window.WebSocket(`ws://${document.location.host}/ws`);
-    socket.onopen = () => socket.send("{}");
-    socket.onmessage = (e) => {
-      const { state, metrics } = JSON.parse(e.data);
-      const { metricMap } = { ...this.state };
-      for (const metric of metrics)
-        metricMap[metric.name] = metric;
-      this.setState({ state, metricMap });
-    };
+    socket.onopen = () => this.queryMetrics({});
+    socket.onmessage = this.handleResponse.bind(this);
     socket.onclose = (e) => {
       if (!e.wasClean)
-        console.log(`Обрыв соединения. Код: ${e.code}, причина: ${e.reason || 'не установлена'}`);
+        console.error(`Connection lost. Code: ${e.code}, reason: ${e.reason || "not recognized"}`);
       else if (e.code !== 1000)
-        console.log(`Завершено с ошибкой. Код: ${e.code}, причина: ${e.reason || 'не установлена'}`)
-      else
-        console.log('Успешно завершено');
+        console.error(`Closed with error. Code: ${e.code}, reason: ${e.reason || "not recognized"}`);
     };
+    return socket;
+  }
+
+  close(name) {
+    const { metricExpanded } = this.state;
+    const index = metricExpanded.indexOf(name);
+    if (index !== -1) {
+      const expanded = [...metricExpanded];
+      expanded.splice(index, 1);
+      this.setState({ metricExpanded: expanded });
+    }
+  }
+
+  expand(name) {
+    const { metricExpanded } = this.state;
+    this.queryMetrics({ expanded: [name] });
+    this.setState({ metricExpanded: [...metricExpanded, name] });
+  }
+
+  updateMetric(name, value) {
+    const { socket, metricMap } = this.state;
+    const metric = metricMap[name];
+    if (metric) {
+      socket.send(JSON.stringify({ target: "update", payload: { name, value } }));
+      this.setState({ metricMap: { ...metricMap, [name]: { ...metric, value } } });
+    }
+  }
+
+  queryMetrics(query) {
+    const { socket } = this.state;
+    socket.send(JSON.stringify({ target: "query", payload: query }));
+  }
+
+  handleResponse(e) {
+    const { state, metrics } = JSON.parse(e.data);
+    const { metricMap } = { ...this.state };
+    for (const metric of metrics)
+      metricMap[metric.name] = metric;
+    this.setState({ state, metricMap });
   }
 }

@@ -3,6 +3,7 @@
 const fs = require("fs");
 const chokidar = require('chokidar');
 const { promisify } = require("util");
+const EventEmitter = require("events");
 const Metric = require("../model/metric");
 const logger = require("../logger");
 
@@ -10,8 +11,9 @@ const readFileAsync = promisify(fs.readFile);
 const GROUP_ID = 1;
 const MAX_CANCEL_RETRY = 5;
 
-class MetricService {
+class MetricService extends EventEmitter {
   constructor({ dataPath = "data/params.json" }) {
+    super();
     this.store = new Map();
     this.storeStateId = 0;
     this.dataPath = dataPath;
@@ -24,17 +26,35 @@ class MetricService {
     this.watcher.on('change', () => this.load({ cancellation: true }));
   }
 
-  getMetrics({ parent, upgrade }) {
+  getMetrics({ expanded = [], upgrade }) {
     if (upgrade === this.storeStateId)
       return { state: this.storeStateId, metrics: [] };
 
+    const relations = [];
+    for (const name of expanded) {
+      if (!this.store.has(name))
+        throw new Error(`Expanded metric {${name}}not found`);
+      relations.push(...this.store.get(name).relations);
+    }
+
     const metrics = [];
-    for (const metric of this.store.values())
-      if (parent && parent.relations.indexOf(metric.name) !== -1)
-        metrics.push(metric);
-      else if (metric.level === 0)
-        metrics.push(metric);
+    for (const metric of this.store.values()) {
+      let marked = false;
+      if (expanded.length)
+        marked = relations.indexOf(metric.name) !== -1;
+      if (upgrade || !expanded.length)
+        marked = metric.level === 0;
+      if (marked) metrics.push(metric);
+    }
     return { state: this.storeStateId, metrics };
+  }
+
+  updateMetric({ name, value }) {
+    if (!this.store.has(name))
+      throw new Error(`Metric ${{ name }} not found`);
+    const metric = this.store.get(name);
+    this.store.set(name, { ...metric, value });
+    return { state: ++this.storeStateId };
   }
 
   load({ cancellation = false } = {}) {
@@ -79,6 +99,7 @@ class MetricService {
       this.loadId = 0;
       this.storeStateId = loadId;
       logger.debug(`Load ${loadId}: complete`);
+      this.emit("load");
     }).catch(err => logger.error({ msg: `Load ${loadId}: ` + err.message, stack: err.stack }));
   }
 }

@@ -1,0 +1,13 @@
+.simplebar-scrollbar {
+    width: 8px;
+    right: 0;
+}
+
+.simplebar-scrollbar:before {
+    border-radius: 0;
+    top: 0 !important;
+    bottom: 0 !important;
+    opacity: 1 !important;
+    transition: none !important;
+    background: #64A3D2;
+}

@@ -1,4 +1,5 @@
 @import "normalize.css";
+@import "scrollbar.css";
 @import "icon.css";
 @import "font.css";
 @import "grid.css";
@@ -12,18 +13,6 @@ html,
 body {
     background: #BBBBB9;
     height: 100%;
-}
-
-.overflow {
-    overflow-x: hidden;
-    overflow-y: scroll;
-    position: relative;
-    -webkit-overflow-scrolling: touch;
-}
-
-.thumb {
-    width: 8px;
-    background-color: #64A3D2;
 }
 
 .app {
@@ -61,17 +50,28 @@ body {
 
 .a-metric-scroll {
     height: 480px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .a-metric {
     max-width: 640px;
-    padding: .75rem 10px;
+    padding: .75rem 0;
     box-sizing: border-box;
     border-bottom: 1px solid #D8D8DA;
 }
 
 .a-metric:last-child {
     border-bottom: 0;
+}
+
+.a-metric_expand {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.a-metric .grid {
+    padding: 0 10px;
 }
 
 .a-metric .grid__cell {
@@ -91,13 +91,20 @@ body {
     margin: 0;
 }
 
-.a-metric__value {
+.a-metric__value,
+.a-metric-related__value {
     text-align: center;
     box-sizing: border-box;
     font-family: "Proxima Nova Semibold", Arial, Helvetica, sans-serif;
     font-size: 14pt;
+    padding-top: .75rem;
+    padding-bottom: .75rem;
     width: 100%;
     border: 0;
+}
+
+.a-metric__value:disabled {
+    background: #fff;
 }
 
 .a-metric__value:focus {
@@ -111,6 +118,7 @@ body {
 .a-metric-icons .icon-edit {
     display: inline-block;
     font-size: 1.5rem;
+    cursor: pointer;
     color: #D9D9DB;
 }
 
@@ -119,8 +127,41 @@ body {
 }
 
 .a-metric-icons .icon-more {
+    margin: 0 .75rem 0 1rem;
     display: inline-block;
     font-size: 1.25rem;
+    cursor: pointer;
     color: #C9C9CB;
-    margin: 0 .75rem 0 1rem;
+}
+
+.a-metric-icons .icon-more_expand {
+    transform: rotate(180deg);
+    color: #619BCC;
+}
+
+.a-metric-related-container {
+    background: #EFEEEC;
+    padding: .5rem 0;
+    margin-top: .75rem;
+    border-top: 1px solid #D8D8DA;
+    border-bottom: 1px solid #D8D8DA;
+}
+
+.a-metric-related {
+    padding: .25rem 0;
+}
+
+.a-metric-related__name {
+    font-family: "Proxima Nova Semibold", Arial, Helvetica, sans-serif;
+    font-size: 12pt;
+    text-align: left;
+}
+
+.a-metric-related__value {
+    background: #fff;
+    border-radius: 5px;
+}
+
+.a-metric-related .icon-edit {
+    margin: 0 3rem 0 0;
 }
