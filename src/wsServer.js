@@ -14,7 +14,7 @@ class WsServer {
   async start() {
     await this.metricService.load();
     this.wss = new WebSocket.Server({ server: this.server, path: "/ws" });
-    this.wss.on("connection", (ws) => new MetricController(ws));
+    this.wss.on("connection", (ws) => new MetricController(ws, this.metricService));
     this.wss.on("error", (err) => logger.error({ msg: err.message, stack: err.stack }));
   }
 }

@@ -1,58 +1,126 @@
+@import "normalize.css";
+@import "icon.css";
+@import "font.css";
+@import "grid.css";
+
 * {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Proxima Nova Regular", Arial, Helvetica, sans-serif;
     font-style: normal;
 }
 
+html,
 body {
     background: #BBBBB9;
+    height: 100%;
 }
 
-.grid {
-    display: block;
-    list-style: none;
-    padding: 0;
-    margin: 0 0 0 -20px;
-    font-size: 0;
+.overflow {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
 }
 
-.grid__cell {
-    box-sizing: border-box;
-    display: inline-block;
-    width: 100%;
-    padding: 0 0 0 20px;
-    margin: 0;
-    vertical-align: top;
-    font-size: 1rem;
+.thumb {
+    width: 8px;
+    background-color: #64A3D2;
 }
 
-.grid--flush > .grid__cell {
-    padding-left: 0;
-}
-
-.grid--middle > .grid__cell {
-    vertical-align: middle;
+.app {
+    min-height: 100%;
+    position: relative;
 }
 
 .a-container {
     position: absolute;
     background: #ffffff;
     box-sizing: border-box;
-    height: 420px;
-    max-width: 540px;
+    height: auto;
+    max-width: 640px;
     left: 0;
     right: 0;
     top: 50%;
     margin: 0 auto;
+    overflow: hidden;
     transform: translateY(-50%);
     z-index: 9100;
 }
 
-.a-header-wrap {
-    background: #EFEEEC;
-    padding: 0 10px;
-}
-
 .a-header {
     color: #9E9E9F;
+    background: #EFEEEC;
+    padding: 0 10px;
+    font-size: 10pt;
     text-transform: uppercase;
+}
+
+.a-header .grid__cell {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.a-metric-scroll {
+    height: 480px;
+}
+
+.a-metric {
+    max-width: 640px;
+    padding: .75rem 10px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #D8D8DA;
+}
+
+.a-metric:last-child {
+    border-bottom: 0;
+}
+
+.a-metric .grid__cell {
+    box-sizing: border-box;
+}
+
+.a-metric__name {
+    font-family: "Proxima Nova Semibold", Arial, Helvetica, sans-serif;
+    font-size: 14pt;
+    margin: 0 0 .5rem;
+    color: #231E1D;
+}
+
+.a-metric__desc {
+    color: #9E9E9F;
+    font-size: 12pt;
+    margin: 0;
+}
+
+.a-metric__value {
+    text-align: center;
+    box-sizing: border-box;
+    font-family: "Proxima Nova Semibold", Arial, Helvetica, sans-serif;
+    font-size: 14pt;
+    width: 100%;
+    border: 0;
+}
+
+.a-metric__value:focus {
+    background: #EFEEEC;
+}
+
+.a-metric-icons {
+    text-align: right;
+}
+
+.a-metric-icons .icon-edit {
+    display: inline-block;
+    font-size: 1.5rem;
+    color: #D9D9DB;
+}
+
+.a-metric-icons .icon-edit_active {
+    color: #619BCC;
+}
+
+.a-metric-icons .icon-more {
+    display: inline-block;
+    font-size: 1.25rem;
+    color: #C9C9CB;
+    margin: 0 .75rem 0 1rem;
 }

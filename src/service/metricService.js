@@ -24,6 +24,19 @@ class MetricService {
     this.watcher.on('change', () => this.load({ cancellation: true }));
   }
 
+  getMetrics({ parent, upgrade }) {
+    if (upgrade === this.storeStateId)
+      return { state: this.storeStateId, metrics: [] };
+
+    const metrics = [];
+    for (const metric of this.store.values())
+      if (parent && parent.relations.indexOf(metric.name) !== -1)
+        metrics.push(metric);
+      else if (metric.level === 0)
+        metrics.push(metric);
+    return { state: this.storeStateId, metrics };
+  }
+
   load({ cancellation = false } = {}) {
     const loadId = Math.ceil(Math.random() * 1000000);
     if (this.loadId) {
@@ -52,7 +65,7 @@ class MetricService {
         if ((metric.groupId || []).indexOf(GROUP_ID) === -1)
           continue;
 
-        this.store.set(metric.name, new Metric(metric));
+        this.store.set(metric.name, new Metric({ ...metric, level: 0 }));
         for (const name of (metric.relations || []))
           relations.add(name);
       }
@@ -60,7 +73,7 @@ class MetricService {
       /* Второй проход - сохранение метрик из relations */
       for (const metric of params) {
         if (relations.has(metric.name))
-          this.store.set(metric.name, new Metric(metric));
+          this.store.set(metric.name, new Metric({ ...metric, level: 1 }));
       }
 
       this.loadId = 0;

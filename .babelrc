@@ -1,4 +1,17 @@
 {
+  "presets": [
+    [
+      "@babel/env",
+      {
+        "targets": {
+          "firefox": "60",
+          "chrome": "70",
+          "safari": "9",
+          "edge": "12"
+        }
+      }
+    ]
+  ],
   "plugins": [
     "babel-plugin-inferno"
   ]

@@ -1,5 +1,7 @@
 "use strict";
 
+const logger = require("../logger");
+
 class MetricController {
   constructor(ws, metricService) {
     this.socket = ws;
@@ -8,7 +10,13 @@ class MetricController {
   }
 
   handleMessage(message) {
-    this.socket.send("{}");
+    try {
+      message = JSON.parse(message);
+      const metrics = this.metricService.getMetrics(message);
+      this.socket.send(JSON.stringify(metrics));
+    } catch (e) {
+      logger.error({ msg: "MetricController[handleMessage]: " + e.message, stack: e.stack });
+    }
   }
 }
 

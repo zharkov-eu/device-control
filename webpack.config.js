@@ -1,7 +1,8 @@
-  "use strict";
+"use strict";
 
 const path = require("path");
 const production = process.env.NODE_ENV === "production";
+const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
@@ -36,6 +37,9 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({ filename: "css/main.css" }),
+    new CopyPlugin([
+      { from: "public/src/font", to: "font" }
+    ])
   ],
   watchOptions: {
     ignored: /node_modules/,
