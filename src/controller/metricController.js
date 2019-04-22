@@ -8,7 +8,10 @@ class MetricController {
     this.state = { expanded: [] };
     this.metricService = metricService;
     this.socket.on("message", this.handleMessage.bind(this));
-    this.metricService.on("load", () => this.getMetrics(this.state));
+
+    const onLoad = () => this.getMetrics(this.state);
+    this.metricService.on("load", onLoad);
+    this.metricService.on("close", () => this.metricService.removeListener("load", onLoad));
   }
 
   handleMessage(message) {
