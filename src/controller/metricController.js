@@ -7,11 +7,11 @@ class MetricController {
     this.socket = ws;
     this.state = { expanded: [] };
     this.metricService = metricService;
+    this.onLoad = () => this.getMetrics(this.state);
     this.socket.on("message", this.handleMessage.bind(this));
 
-    const onLoad = () => this.getMetrics(this.state);
-    this.metricService.on("load", onLoad);
-    this.metricService.on("close", () => this.metricService.removeListener("load", onLoad));
+    this.metricService.on("load", this.onLoad);
+    this.socket.on("close", this.close.bind(this));
   }
 
   handleMessage(message) {
@@ -34,12 +34,24 @@ class MetricController {
     const { expanded } = this.state;
     this.state = { expanded: [...expanded, ...(query.expanded || [])] };
     const { state, metrics } = this.metricService.getMetrics(query);
-    this.socket.send(JSON.stringify({ metrics, state }));
+    try {
+      this.socket.send(JSON.stringify({ metrics, state }));
+    } catch (e) {
+      this.close();
+    }
   }
 
   update({ name, value }) {
     const { state } = this.metricService.updateMetric({ name, value });
-    this.socket.send(JSON.stringify({ metrics: [], state }));
+    try {
+      this.socket.send(JSON.stringify({ metrics: [], state }));
+    } catch (e) {
+      this.close();
+    }
+  }
+
+  close() {
+    this.metricService.removeListener("load", this.onLoad);
   }
 }
 
