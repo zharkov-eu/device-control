@@ -16,23 +16,20 @@ body {
 }
 
 .app {
-    min-height: 100%;
-    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    width: 100%;
 }
 
 .a-container {
-    position: absolute;
     background: #ffffff;
     box-sizing: border-box;
-    height: auto;
-    max-width: 640px;
-    left: 0;
-    right: 0;
-    top: 50%;
-    margin: 0 auto;
+    min-width: 640px;
     overflow: hidden;
-    transform: translateY(-50%);
-    z-index: 9100;
+    height: auto;
 }
 
 .a-header {
@@ -101,6 +98,11 @@ body {
     padding-bottom: .75rem;
     width: 100%;
     border: 0;
+}
+
+.a-metric__value::-ms-clear,
+.a-metric-related__value::-ms-clear {
+    display: none;
 }
 
 .a-metric__value:disabled {

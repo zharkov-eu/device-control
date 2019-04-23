@@ -1,6 +1,6 @@
 {
   "name": "device-control",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Тестовое задание (контроль показателей устройства)",
   "main": "index.js",
   "scripts": {
@@ -34,6 +34,7 @@
     "babel-loader": "^8.0.5",
     "babel-plugin-inferno": "^6.0.5",
     "copy-webpack-plugin": "^5.0.2",
+    "core-js": "^3.0.1",
     "css-loader": "^2.1.1",
     "mini-css-extract-plugin": "^0.6.0",
     "webpack": "^4.30.0",
